@@ -38,6 +38,8 @@ public class GetInfoFromTable {
         transactionModel.setTransactionAmmount(transactionAmmount);
         transactionModel.setTransactionDescription(transactionDescription);
         return  transactionModel;
+        git
 
     }
+
 }
