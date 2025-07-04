@@ -21,24 +21,28 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Instalar Google Chrome y Apache
+      - name: Instalar dependencias (Apache y Chrome)
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip apache2
+          sudo apt-get install -y apache2 wget unzip xvfb
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
           sudo systemctl start apache2
           sudo systemctl enable apache2
 
-      - name: Copiar archivo HTML al servidor web
+      - name: Copiar login.html al servidor Apache
         run: |
           sudo mkdir -p /var/www/html/login
-          sudo cp src/test/resources/paginas/login/login.html /var/www/html/login/
+          sudo cp src/test/resources/paginas/login/login.html /var/www/html/login/login.html
 
-      - name: Esperar y verificar la carga del HTML
+      - name: Esperar a que Apache esté listo y sirviendo el login.html
         run: |
-          sleep 5
-          curl -I http://localhost/login/login.html || echo "La URL no responde"
+          for i in {1..10}; do
+            curl --silent http://localhost/login/login.html | grep '<input type="text" class="form-control" id="username"' && exit 0
+            echo "Esperando que el servidor levante... ($i)"
+            sleep 2
+          done
+          echo "El servidor no respondió con el contenido esperado." && exit 1
 
       - name: Ejecutar pruebas con Maven
         run: mvn clean verify
@@ -49,10 +53,3 @@ jobs:
         with:
           name: serenity-report
           path: target/site/serenity
-
-      - name: Mostrar logs en caso de error
-        if: failure()
-        run: |
-          echo "==== Failsafe Error Logs ===="
-          ls -la target/failsafe-reports || echo "No se encontró la carpeta failsafe-reports"
-          cat target/failsafe-reports/*.txt || echo "No se encontró archivo de error detallado"
