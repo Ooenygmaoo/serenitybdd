@@ -1,52 +1,39 @@
-name: Serenity BDD Tests
+name: Ejecutar pruebas Serenity con HTML local
 
 on:
   push:
-    branches: [ staging ]
+    branches: [main]
   pull_request:
-    branches: [ staging ]
 
 jobs:
-  run-tests:
+  test-serenity:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Clonar el repositorio
+      - name: Clonar repositorio
         uses: actions/checkout@v3
 
-      - name: Configurar Java 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'adopt'
-          cache: maven
-
-      - name: Instalar Google Chrome
+      - name: Instalar Node y http-server
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip xvfb
-          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install -y ./google-chrome-stable_current_amd64.deb
-
-      - name: Instalar http-server para servir login.html
-        run: |
+          sudo apt-get install -y npm
           sudo npm install -g http-server
 
-      - name: Iniciar servidor local con http-server
+      - name: Iniciar servidor local en segundo plano
         run: |
           npx http-server src/test/resources/paginas -p 8080 &
-          sleep 5
+          sleep 3
 
-      - name: Verificar disponibilidad de login.html
+      - name: Verificar que login.html esté disponible
         run: |
-          curl -I http://localhost:8080/login.html || echo "login.html no disponible"
+          echo "Probando acceso a http://localhost:8080/login.html"
+          curl -I http://localhost:8080/login.html
 
-      - name: Ejecutar pruebas con Maven
-        run: mvn clean verify
-
-      - name: Subir reporte Serenity
-        if: always()
-        uses: actions/upload-artifact@v4
+      - name: Instalar Maven
+        uses: s4u/setup-maven-action@v1
         with:
-          name: serenity-report
-          path: target/site/serenity
+          java-version: '17'
+          maven-version: '3.9.6'
+
+      - name: Ejecutar pruebas
+        run: mvn clean verify
