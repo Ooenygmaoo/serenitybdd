@@ -5,14 +5,9 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.screenplay.Actor;
-import net.serenitybdd.screenplay.actions.Click;
-import net.serenitybdd.screenplay.actions.Enter;
+
 import net.serenitybdd.screenplay.actions.Open;
-import net.serenitybdd.screenplay.actions.Upload;
-import net.serenitybdd.screenplay.actions.Switch;
-import net.serenitybdd.screenplay.actions.SelectFromOptions;
-import net.serenitybdd.screenplay.ensure.Ensure;
-import net.serenitybdd.screenplay.targets.Target;
+
 import starter.tasks.registration.CheckNewAccountCreated;
 import starter.tasks.registration.DoNotSendAllRequieredInformation;
 import starter.tasks.registration.RegisterUser;

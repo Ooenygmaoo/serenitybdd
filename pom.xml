@@ -27,6 +27,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>5.8.0</version> <!-- o la versión más reciente -->
+        </dependency>
+
+        <dependency>
             <groupId>net.serenity-bdd</groupId>
             <artifactId>serenity-cucumber</artifactId>
             <version>${serenity.version}</version>
