@@ -5,7 +5,6 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.screenplay.Actor;
-import net.serenitybdd.screenplay.actions.Open;
 import starter.models.LoginModel;
 import starter.models.TransactionModel;
 import starter.tasks.addTransaction.AddTransaction;
