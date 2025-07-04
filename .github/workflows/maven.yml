@@ -28,14 +28,19 @@ jobs:
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
+      - name: Instalar y configurar Apache2 para servir HTML local
+        run: |
+          sudo apt-get install -y apache2
+          sudo cp -r src/test/resources/paginas/* /var/www/html/
+          sudo systemctl start apache2
+          sudo systemctl enable apache2
+
+      - name: Verificar que la página esté disponible
+        run: |
+          curl -I http://localhost/login/login.html || echo "La URL no está respondiendo"
+
       - name: Ejecutar pruebas con Maven
         run: mvn clean verify
-      - name: Mostrar errores del failsafe
-        if: failure()
-        run: |
-          echo "==== Failsafe Error Logs ===="
-          ls -la target/failsafe-reports || echo "No se encontró la carpeta failsafe-reports"
-          cat target/failsafe-reports/*.txt || echo "No se encontró archivo de error detallado"
 
       - name: Subir reporte Serenity
         if: always()
