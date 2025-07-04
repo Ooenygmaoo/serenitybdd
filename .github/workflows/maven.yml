@@ -1,5 +1,4 @@
-
-name: Maven Build
+name: Serenity BDD Tests
 
 on:
   push:
@@ -8,18 +7,33 @@ on:
     branches: [ staging ]
 
 jobs:
-  build:
-
+  run-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'adopt'
-        cache: maven
-    - name: Build with Maven
-      run: mvn clean verify
+      - name: Clonar el repositorio
+        uses: actions/checkout@v3
 
+      - name: Configurar Java 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: maven
+
+      - name: Instalar Google Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip xvfb
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+
+      - name: Ejecutar pruebas con Maven
+        run: mvn clean verify
+
+      - name: Subir reporte Serenity
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serenity-report
+          path: target/site/serenity
