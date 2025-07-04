@@ -2,9 +2,9 @@ name: Serenity BDD Tests
 
 on:
   push:
-    branches: [main]
+    branches: [staging]
   pull_request:
-    branches: [main]
+    branches: [staging]
 
 jobs:
   run-tests:
