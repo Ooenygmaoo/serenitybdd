@@ -21,23 +21,24 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Instalar Google Chrome
+      - name: Instalar Google Chrome y Apache
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip xvfb
+          sudo apt-get install -y wget unzip apache2
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
-
-      - name: Instalar y configurar Apache2 para servir HTML local
-        run: |
-          sudo apt-get install -y apache2
-          sudo cp -r src/test/resources/paginas/* /var/www/html/
           sudo systemctl start apache2
           sudo systemctl enable apache2
 
-      - name: Verificar que la página esté disponible
+      - name: Copiar archivo HTML al servidor web
         run: |
-          curl -I http://localhost/login/login.html || echo "La URL no está respondiendo"
+          sudo mkdir -p /var/www/html/login
+          sudo cp src/test/resources/paginas/login/login.html /var/www/html/login/
+
+      - name: Esperar y verificar la carga del HTML
+        run: |
+          sleep 5
+          curl -I http://localhost/login/login.html || echo "La URL no responde"
 
       - name: Ejecutar pruebas con Maven
         run: mvn clean verify
@@ -48,3 +49,10 @@ jobs:
         with:
           name: serenity-report
           path: target/site/serenity
+
+      - name: Mostrar logs en caso de error
+        if: failure()
+        run: |
+          echo "==== Failsafe Error Logs ===="
+          ls -la target/failsafe-reports || echo "No se encontró la carpeta failsafe-reports"
+          cat target/failsafe-reports/*.txt || echo "No se encontró archivo de error detallado"
