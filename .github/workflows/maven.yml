@@ -21,28 +21,26 @@ jobs:
           distribution: 'adopt'
           cache: maven
 
-      - name: Instalar dependencias (Apache y Chrome)
+      - name: Instalar Google Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y apache2 wget unzip xvfb
+          sudo apt-get install -y wget unzip xvfb
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
-          sudo systemctl start apache2
-          sudo systemctl enable apache2
 
-      - name: Copiar login.html al servidor Apache
+      - name: Instalar Node.js y http-server
         run: |
-          sudo mkdir -p /var/www/html/login
-          sudo cp src/test/resources/paginas/login/login.html /var/www/html/login/login.html
+          sudo apt-get install -y npm
+          npm install -g http-server
 
-      - name: Esperar a que Apache esté listo y sirviendo el login.html
+      - name: Servir archivo login.html en localhost:8080
         run: |
-          for i in {1..10}; do
-            curl --silent http://localhost/login/login.html | grep '<input type="text" class="form-control" id="username"' && exit 0
-            echo "Esperando que el servidor levante... ($i)"
-            sleep 2
-          done
-          echo "El servidor no respondió con el contenido esperado." && exit 1
+          nohup http-server src/test/resources/paginas -p 8080 > server.log 2>&1 &
+
+      - name: Verificar que la página está disponible
+        run: |
+          sleep 3
+          curl -I http://localhost:8080/login/login.html
 
       - name: Ejecutar pruebas con Maven
         run: mvn clean verify
