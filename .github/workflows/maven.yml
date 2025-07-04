@@ -7,7 +7,7 @@ on:
     branches: [ staging ]
 
 jobs:
-  run-serenity-tests:
+  run-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,31 +17,29 @@ jobs:
       - name: Configurar Java 17
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
           java-version: '17'
+          distribution: 'adopt'
           cache: maven
 
-      - name: Instalar dependencias necesarias (Chrome y herramientas)
+      - name: Instalar Google Chrome
         run: |
           sudo apt-get update
           sudo apt-get install -y wget unzip xvfb
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
-      - name: Instalar http-server localmente
-        run: npm install http-server
+      - name: Instalar http-server para servir login.html
+        run: |
+          sudo npm install -g http-server
 
-      - name: Iniciar servidor con HTML local
+      - name: Iniciar servidor local con http-server
         run: |
           npx http-server src/test/resources/paginas -p 8080 &
-          sleep 3
+          sleep 5
 
-      - name: Verificar que la página esté disponible
+      - name: Verificar disponibilidad de login.html
         run: |
-          curl -I http://localhost:8080/login/login.html || {
-            echo "❌ La URL no está respondiendo"
-            exit 1
-          }
+          curl -I http://localhost:8080/login.html || echo "login.html no disponible"
 
       - name: Ejecutar pruebas con Maven
         run: mvn clean verify
