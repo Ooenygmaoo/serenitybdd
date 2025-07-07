@@ -22,7 +22,7 @@ public class AddTransactionStepDefinitions {
 
       LoginModel loginModel= GetInfoFromTable.GetLoginCredentials(userLogin);
         actor.attemptsTo(
-                NavigateTo.navigateTo(),
+                NavigateTo.navigateToLoginPage(),
                 new Login(loginModel.getUsername(),loginModel.getPassword())
 
         );

@@ -44,7 +44,7 @@ jobs:
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
       - name: Ejecutar pruebas con Maven
-        run: mvn clean verify
+        run: mvn clean verify -Dwebdriver.base.url=http://localhost:8080/login.html
 
       - name: Subir reporte Serenity
         if: always()
