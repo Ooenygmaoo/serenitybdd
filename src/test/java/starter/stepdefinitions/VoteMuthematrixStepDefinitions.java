@@ -8,6 +8,9 @@ import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;
 import net.serenitybdd.screenplay.actions.Open;
 import net.serenitybdd.screenplay.actions.Scroll;
+import net.serenitybdd.screenplay.waits.WaitUntil;
+
+import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisible;
 
 public class VoteMuthematrixStepDefinitions {
 
@@ -26,6 +29,7 @@ public class VoteMuthematrixStepDefinitions {
 
         actor.attemptsTo(
 
+                WaitUntil.the("//button[contains(.,'Cerrar')]", isVisible()).forNoMoreThan(15).seconds(),
                 Click.on("//button[contains(.,'Cerrar')]"),
                 Click.on("//button[normalize-space()='Log In']"),
                 Enter.theValue("slash17").into("//input[@id='username']"),
