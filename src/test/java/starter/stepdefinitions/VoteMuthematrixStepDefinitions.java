@@ -13,7 +13,7 @@ public class VoteMuthematrixStepDefinitions {
 
 
 
-    @Given("{actor}enter to the muthermatrix page")
+    @Given("{actor}enter to the muthematrix page")
     public void entertothemuthermatrixpage (Actor actor){
         actor.attemptsTo(
                 Open.url("https://webx.muthematrix.com/")
