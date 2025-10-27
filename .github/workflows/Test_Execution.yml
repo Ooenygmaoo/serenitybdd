@@ -11,13 +11,13 @@ on:
 jobs:
   run-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 15  # ← Evita jobs eternos
+    timeout-minutes: 15
 
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1  # ← Clona solo el último commit
+          fetch-depth: 1
 
       - name: Cache dependencias Maven
         uses: actions/cache@v3
@@ -34,7 +34,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven  # ← Cache automático
+          cache: maven
 
       - name: Cache Chrome
         uses: actions/cache@v3
@@ -61,9 +61,9 @@ jobs:
             -Dcucumber.filter.tags="@webMuthematrix" \
             -Denvironment=ci \
             -Dskip.tests=false \
-            -Dmaven.test.failure.ignore=true \  # ← Continúa aunque falle un test
-            -Dserenity.take.screenshots=FOR_FAILURES \  # ← Solo screenshots en fallos
-            -T 1C  # ← Ejecución paralela
+            -Dmaven.test.failure.ignore=true \
+            -Dserenity.take.screenshots=FOR_FAILURES \
+            -T 1C
 
       - name: Subir reporte Serenity
         if: always()
