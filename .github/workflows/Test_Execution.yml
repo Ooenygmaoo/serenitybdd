@@ -28,7 +28,7 @@ jobs:
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
       - name: Ejecutar solo el feature @webMuthematrix
-        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Dheadless.mode=false
+        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Dheadless.mode=true
 
       - name: Subir reporte Serenity
         if: always()
