@@ -1,7 +1,6 @@
 package starter.ui.registration;
 
-import net.serenitybdd.screenplay.actions.Switch;
-import net.serenitybdd.screenplay.ensure.Ensure;
+
 import net.serenitybdd.screenplay.targets.Target;
 
 public class SummaryPage {
