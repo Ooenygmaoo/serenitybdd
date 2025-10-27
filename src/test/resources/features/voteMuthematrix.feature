@@ -1,9 +1,7 @@
 @webMuthematrix
 Feature:  Votation
 
-  Scenario: give a vote all the day 12  hour perday
-
-
-    Given   David enter to the muthematrix page
-    When    David enter to the login page and clic on en vote
-    Then  David Could be vote for the server
+  Scenario: David votes for the server
+    Given David enter to the muthematrix page
+    When David enter to the login page and click on vote
+    Then David Could be vote for the server

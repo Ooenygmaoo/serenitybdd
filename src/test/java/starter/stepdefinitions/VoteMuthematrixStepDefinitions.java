@@ -5,11 +5,13 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.actions.*;
+import net.serenitybdd.screenplay.conditions.Check;
+import net.serenitybdd.screenplay.questions.Presence;
 import net.serenitybdd.screenplay.waits.WaitUntil;
-import net.serenitybdd.screenplay.questions.WebElementQuestion;
+
 
 import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.*;
-import static net.serenitybdd.screenplay.questions.WebElementQuestion.the;
+
 
 public class VoteMuthematrixStepDefinitions {
 
@@ -21,20 +23,22 @@ public class VoteMuthematrixStepDefinitions {
         );
     }
 
-    @When("{actor} enter to the login page and clic on en vote")
+    @When("{actor} enter to the login page and click on vote")
     public void enterToTheLoginPageAndClickOnVote(Actor actor) {
         actor.attemptsTo(
-                // Esperar a que la página cargue completamente
-                WaitUntil.the("//button[contains(.,'Cerrar')]", isVisible())
-                        .forNoMoreThan(30).seconds(),
-                Click.on("//button[contains(.,'Cerrar')]"),
 
-                // Esperar antes del siguiente click
+                Check.whether(Presence.of("//button[contains(.,'Cerrar')]").asBoolean())
+                        .andIfSo(
+                                WaitUntil.the("//button[contains(.,'Cerrar')]", isVisible())
+                                        .forNoMoreThan(5).seconds(),
+                                Click.on("//button[contains(.,'Cerrar')]")
+                        ),
+
+                // Continuar con el flujo normal
                 WaitUntil.the("//button[normalize-space()='Log In']", isClickable())
                         .forNoMoreThan(15).seconds(),
                 Click.on("//button[normalize-space()='Log In']"),
 
-                // Rellenar formulario con delays
                 WaitUntil.the("//input[@id='username']", isVisible())
                         .forNoMoreThan(15).seconds(),
                 Enter.theValue("slash17").into("//input[@id='username']"),
@@ -45,7 +49,6 @@ public class VoteMuthematrixStepDefinitions {
 
                 Click.on("//input[@id='submit']"),
 
-                // Esperar a que el login se complete
                 WaitUntil.the("//button[normalize-space()='Panel de Usuario']", isVisible())
                         .forNoMoreThan(20).seconds(),
                 Click.on("//button[normalize-space()='Panel de Usuario']")
