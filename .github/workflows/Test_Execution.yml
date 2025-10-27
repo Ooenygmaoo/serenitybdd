@@ -5,8 +5,7 @@ on:
     branches: [staging]
   pull_request:
     branches: [staging]
-  schedule:
-    - cron: "0 11,23 * * *"
+
 
 jobs:
   run-tests:
