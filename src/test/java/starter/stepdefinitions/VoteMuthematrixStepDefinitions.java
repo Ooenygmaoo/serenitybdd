@@ -25,6 +25,8 @@ public class VoteMuthematrixStepDefinitions {
     public void entertotheloginpageandcliconenvote(Actor actor){
 
         actor.attemptsTo(
+
+                Click.on("//button[contains(.,'Cerrar')]"),
                 Click.on("//button[normalize-space()='Log In']"),
                 Enter.theValue("slash17").into("//input[@id='username']"),
         Enter.theValue("nirvana16").into("//input[@id='password']"),
@@ -43,11 +45,11 @@ public class VoteMuthematrixStepDefinitions {
     public void Couldbevotefortheserver(Actor actor){
 
         actor.attemptsTo(
-                Scroll.to("//a[@href='https://webx.muthematrix.com/usercp/vote']//div[@class='usercp_main_item']"),
                 Click.on("//a[@href='https://webx.muthematrix.com/usercp/vote']//div[@class='usercp_main_item']"),
                 Scroll.to("//div[@class='vote-box-site']"),
                 Click.on("//div[@class='vote-box-site']")
         );
+
 
     }
 }
