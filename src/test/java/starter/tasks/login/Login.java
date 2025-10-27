@@ -24,7 +24,6 @@ public class Login implements Task {
                 Enter.theValue("user").into(LoginPage.INPUT_USERNAME),
                 Enter.theValue("pass").into(LoginPage.INPUT_PASSWORD),
                 Click.on(LoginPage.BUTTON_LOG_IN)
-
         );
     }
 }
