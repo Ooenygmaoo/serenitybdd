@@ -5,11 +5,8 @@ on:
     branches: [staging]
   pull_request:
     branches: [staging]
-
   schedule:
-   - cron: "0 12,0 * * *"
-
-
+    - cron: "0 12,0 * * *"
 
 jobs:
   run-tests:
@@ -33,7 +30,7 @@ jobs:
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
       - name: Ejecutar solo el feature @webMuthematrix
-        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Dheadless.mode=false
+        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Dheadless.mode=true -Dwebdriver.chrome.arguments="--no-sandbox,--disable-dev-shm-usage,--remote-allow-origins=*,--incognito"
 
       - name: Subir reporte Serenity
         if: always()
