@@ -4,56 +4,65 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.screenplay.Actor;
-import net.serenitybdd.screenplay.actions.Click;
-import net.serenitybdd.screenplay.actions.Enter;
-import net.serenitybdd.screenplay.actions.Open;
-import net.serenitybdd.screenplay.actions.Scroll;
+import net.serenitybdd.screenplay.actions.*;
 import net.serenitybdd.screenplay.waits.WaitUntil;
+import net.serenitybdd.screenplay.questions.WebElementQuestion;
 
-import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.isVisible;
+import static net.serenitybdd.screenplay.matchers.WebElementStateMatchers.*;
+import static net.serenitybdd.screenplay.questions.WebElementQuestion.the;
 
 public class VoteMuthematrixStepDefinitions {
 
-
-
-    @Given("{actor}enter to the muthematrix page")
-    public void entertothemuthermatrixpage (Actor actor){
+    @Given("{actor} enter to the muthematrix page")
+    public void enterToTheMuthematrixPage(Actor actor) {
         actor.attemptsTo(
-                Open.url("https://webx.muthematrix.com/")
+                Open.url("https://webx.muthematrix.com/"),
+                WaitUntil.the("//body", isVisible()).forNoMoreThan(30).seconds()
         );
     }
 
-
-    @When("{actor}enter to the login page and clic on en vote")
-    public void entertotheloginpageandcliconenvote(Actor actor){
-
+    @When("{actor} enter to the login page and clic on en vote")
+    public void enterToTheLoginPageAndClickOnVote(Actor actor) {
         actor.attemptsTo(
-
-                WaitUntil.the("//button[contains(.,'Cerrar')]", isVisible()).forNoMoreThan(15).seconds(),
+                // Esperar a que la página cargue completamente
+                WaitUntil.the("//button[contains(.,'Cerrar')]", isVisible())
+                        .forNoMoreThan(30).seconds(),
                 Click.on("//button[contains(.,'Cerrar')]"),
+
+                // Esperar antes del siguiente click
+                WaitUntil.the("//button[normalize-space()='Log In']", isClickable())
+                        .forNoMoreThan(15).seconds(),
                 Click.on("//button[normalize-space()='Log In']"),
+
+                // Rellenar formulario con delays
+                WaitUntil.the("//input[@id='username']", isVisible())
+                        .forNoMoreThan(15).seconds(),
                 Enter.theValue("slash17").into("//input[@id='username']"),
-        Enter.theValue("nirvana16").into("//input[@id='password']"),
+
+                WaitUntil.the("//input[@id='password']", isVisible())
+                        .forNoMoreThan(10).seconds(),
+                Enter.theValue("nirvana16").into("//input[@id='password']"),
+
                 Click.on("//input[@id='submit']"),
+
+                // Esperar a que el login se complete
+                WaitUntil.the("//button[normalize-space()='Panel de Usuario']", isVisible())
+                        .forNoMoreThan(20).seconds(),
                 Click.on("//button[normalize-space()='Panel de Usuario']")
-
-
         );
-
-
-
-
     }
 
-    @Then("{actor}Could be vote for the server")
-    public void Couldbevotefortheserver(Actor actor){
-
+    @Then("{actor} Could be vote for the server")
+    public void couldVoteForTheServer(Actor actor) {
         actor.attemptsTo(
-                Click.on("//a[@href='https://webx.muthematrix.com/usercp/vote']//div[@class='usercp_main_item']"),
+                WaitUntil.the("//a[@href='https://webx.muthematrix.com/usercp/vote']", isVisible())
+                        .forNoMoreThan(15).seconds(),
+                Click.on("//a[@href='https://webx.muthematrix.com/usercp/vote']"),
+
+                WaitUntil.the("//div[@class='vote-box-site']", isVisible())
+                        .forNoMoreThan(15).seconds(),
                 Scroll.to("//div[@class='vote-box-site']"),
                 Click.on("//div[@class='vote-box-site']")
         );
-
-
     }
 }

@@ -6,7 +6,6 @@ on:
   pull_request:
     branches: [staging]
 
-
 jobs:
   run-tests:
     runs-on: ubuntu-latest
@@ -27,9 +26,10 @@ jobs:
           sudo apt-get update
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo apt install -y ./google-chrome-stable_current_amd64.deb
+          echo "Chrome version: $(google-chrome --version)"
 
-      - name: Ejecutar solo el feature @webMuthematrix
-        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Dheadless.mode=true -Dwebdriver.chrome.arguments="--no-sandbox,--disable-dev-shm-usage,--remote-allow-origins=*,--incognito"
+      - name: Ejecutar tests con entorno CI
+        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Denvironment=ci
 
       - name: Subir reporte Serenity
         if: always()
