@@ -2,7 +2,7 @@ name: Serenity BDD Tests
 
 on:
   push:
-    branches: [main]
+    branches: [main,staging]
   schedule:
     - cron: "30 1,13 * * *"
 
@@ -14,34 +14,24 @@ jobs:
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
 
       - name: Configurar Java 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: maven  # ✅ Este cache SÍ funciona y acelera Maven
+
 
       - name: Instalar Chrome rápido
         run: |
-          # Instalación directa sin cache (más confiable)
-          curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/google-chrome.gpg] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
           sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y wget
+          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo apt install -y ./google-chrome-stable_current_amd64.deb
           echo "Chrome version: $(google-chrome --version)"
 
-      - name: Ejecutar tests optimizados
-        run: |
-          mvn clean verify \
-            -Dcucumber.filter.tags="@webMuthematrix" \
-            -Denvironment=ci \
-            -Dskip.tests=false \
-            -Dmaven.test.failure.ignore=true \
-            -Dserenity.take.screenshots=FOR_FAILURES \
-            -T 1C
+      - name: Ejecutar tests
+        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Denvironment=ci
 
       - name: Subir reporte Serenity
         if: always()
