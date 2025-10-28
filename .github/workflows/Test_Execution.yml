@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 1
 
       - name: Cache dependencias Maven
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             ~/.m2/repository
@@ -35,7 +35,7 @@ jobs:
           cache: maven
 
       - name: Cache Chrome
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: |
             /opt/google/chrome
