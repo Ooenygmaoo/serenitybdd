@@ -2,7 +2,7 @@ name: Serenity BDD Tests - Master
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   schedule:
     - cron: "30 1,13 * * *"    # 8:30 PM y 8:30 AM COT
 
