@@ -39,7 +39,5 @@ public class GetInfoFromTable {
         transactionModel.setTransactionDescription(transactionDescription);
         return  transactionModel;
 
-
     }
-
 }
