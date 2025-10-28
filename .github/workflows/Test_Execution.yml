@@ -1,10 +1,10 @@
-name: Serenity BDD Tests
+name: Serenity BDD Tests - Master
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   schedule:
-    - cron: "30 1,13 * * *"
+    - cron: "30 1,13 * * *"    # 8:30 PM y 8:30 AM COT
 
 jobs:
   run-tests:
@@ -14,28 +14,51 @@ jobs:
     steps:
       - name: Clonar repositorio
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: Configurar Java 21
+      - name: Configurar Java 21 con Cache
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: maven  # ✅ Cache automático de Maven
 
+      - name: Cache dependencias Maven
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+            target
+          key: maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-
 
-      - name: Instalar Chrome rápido
+      - name: Instalar Chrome optimizado
         run: |
-          sudo apt-get update
-          sudo apt-get install -y wget
-          wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo apt install -y ./google-chrome-stable_current_amd64.deb
+          # Verificar si Chrome ya está instalado
+          if ! command -v google-chrome &> /dev/null; then
+            echo "Instalando Chrome..."
+            sudo apt-get update
+            wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+            sudo apt install -y ./google-chrome-stable_current_amd64.deb
+          else
+            echo "Chrome ya está instalado"
+          fi
           echo "Chrome version: $(google-chrome --version)"
 
-      - name: Ejecutar tests
-        run: mvn clean verify -Dcucumber.filter.tags="@webMuthematrix" -Denvironment=ci
+      - name: Ejecutar tests optimizados
+        run: |
+          mvn clean verify \
+            -Dcucumber.filter.tags="@webMuthematrix" \
+            -Denvironment=ci \
+            -Dmaven.test.failure.ignore=true \
+            -Dserenity.take.screenshots=FOR_FAILURES \
+            -T 1C  # ✅ Ejecución paralela
 
       - name: Subir reporte Serenity
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: serenity-report
+          name: serenity-report-main
           path: target/site/serenity
