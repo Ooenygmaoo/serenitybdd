@@ -2,9 +2,12 @@ name: Serenity BDD Tests - Master
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
+
   schedule:
-    - cron: "1 5,18 * * *"    # 12 am y 1 pm
+    - cron: '0 0 * * *'
+    - cron: '0 12 * * *'
+
 
 jobs:
   run-tests:
