@@ -4,9 +4,11 @@ on:
   push:
     branches: [ master ]
 
+  workflow_dispatch:   # 🔓 Reactiva el workflow y permite ejecución manual
+
   schedule:
-    - cron: '0 0 * * *'
-    - cron: '0 12 * * *'
+    - cron: '0 0 * * *'   # 12:00 AM UTC
+    - cron: '0 12 * * *'  # 12:00 PM UTC
 
 jobs:
   run-tests:
@@ -26,16 +28,21 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Instalar Google Chrome
+      - name: Instalar Google Chrome (solo si no existe)
         run: |
           if ! command -v google-chrome &> /dev/null; then
+            echo "Instalando Chrome..."
             sudo apt-get update
             wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
             sudo apt install -y ./google-chrome-stable_current_amd64.deb
+          else
+            echo "Chrome ya instalado"
           fi
           google-chrome --version
 
-      - name: Ejecutar pruebas Serenity (sin Cloudflare)
+      - name: Ejecutar pruebas Serenity
+        env:
+          CI: true
         run: |
           mvn clean verify \
             -Dcucumber.filter.tags="not @cloudflare and @webMuthematrix" \
