@@ -1,60 +1,93 @@
-name: Serenity BDD Tests - Master
+name: BrowserStack Tests - 11 AM & 11 PM Colombia
 
 on:
   push:
     branches: [ master ]
 
-  workflow_dispatch:   # 🔓 Reactiva el workflow y permite ejecución manual
+  workflow_dispatch:   # Permite ejecución manual
 
   schedule:
-    - cron: '0 0 * * *'   # 12:00 AM UTC
-    - cron: '0 12 * * *'  # 12:00 PM UTC
+    - cron: '0 16 * * *'   # 11:00 AM Colombia (UTC-5 → 16:00 UTC)
+    - cron: '0 4 * * *'    # 11:00 PM Colombia (UTC-5 → 04:00 UTC del día siguiente)
 
 jobs:
-  run-tests:
+  browserstack-tests:
+    name: BrowserStack - Windows 10 Chrome Latest
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
 
     steps:
-      - name: Clonar repositorio
+      - name: 📥 Checkout repositorio
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Configurar Java 21 con cache
+      - name: ☕ Configurar Java 17 con cache Maven
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '17'
           distribution: 'temurin'
           cache: maven
 
-      - name: Instalar Google Chrome (solo si no existe)
+      - name: 🔍 Verificar configuración BrowserStack
         run: |
-          if ! command -v google-chrome &> /dev/null; then
-            echo "Instalando Chrome..."
-            sudo apt-get update
-            wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-            sudo apt install -y ./google-chrome-stable_current_amd64.deb
-          else
-            echo "Chrome ya instalado"
-          fi
-          google-chrome --version
+          echo "🌍 Ejecutando tests en BrowserStack"
+          echo "⏰ Hora de ejecución: $(date)"
+          echo "🖥️  Plataforma: Windows 10 + Chrome Latest"
+          echo "🌎 Zona horaria: America/Bogota (Colombia)"
+          echo "👤 Usuario: david3360"
+          echo "================================"
 
-      - name: Ejecutar pruebas Serenity
+      - name: 🧪 Ejecutar tests en BrowserStack
         env:
-          CI: true
+          BROWSERSTACK_USER: david3360
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
           mvn clean verify \
-            -Dcucumber.filter.tags="not @cloudflare and @webMuthematrix" \
-            -Dheadless.mode=true \
-            -Denvironment=ci \
-            -Dmaven.test.failure.ignore=true \
-            -Dserenity.take.screenshots=FOR_FAILURES \
-            -T 1C
+            -Denvironment=browserstack \
+            -Dcucumber.filter.tags="@webMuthematrix" \
+            -Dmaven.test.failure.ignore=true
 
-      - name: Subir reporte Serenity
+      - name: 📊 Generar reporte Serenity
+        if: always()
+        run: mvn serenity:aggregate
+
+      - name: 📦 Subir reporte Serenity
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: serenity-report-master
-          path: target/site/serenity
+          name: serenity-browserstack-report-${{ github.run_number }}
+          path: target/site/serenity/
+          retention-days: 30
+
+      - name: 📋 Publicar resumen de resultados
+        if: always()
+        run: |
+          echo "## 📊 Resultados BrowserStack - Windows 10 Chrome" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Información de Ejecución" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fecha**: $(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Plataforma**: Windows 10 + Chrome Latest" >> $GITHUB_STEP_SUMMARY
+          echo "- **Zona Horaria**: America/Bogota (Colombia)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Usuario BrowserStack**: david3360" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag ejecutado**: @webMuthematrix" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Enlaces" >> $GITHUB_STEP_SUMMARY
+          echo "- [📊 Dashboard BrowserStack](https://automate.browserstack.com/dashboard)" >> $GITHUB_STEP_SUMMARY
+          echo "- [🎥 Videos y Logs](https://automate.browserstack.com/dashboard)" >> $GITHUB_STEP_SUMMARY
+          echo "- 📁 Reporte Serenity disponible en Artifacts" >> $GITHUB_STEP_SUMMARY
+
+      - name: ✅ Test completado exitosamente
+        if: success()
+        run: |
+          echo "✅ Tests ejecutados exitosamente en BrowserStack"
+          echo "🔗 Ver resultados completos en: https://automate.browserstack.com/dashboard"
+          echo "📊 Reporte Serenity subido como artifact"
+
+      - name: ❌ Test fallido - Ver logs
+        if: failure()
+        run: |
+          echo "❌ Los tests fallaron en BrowserStack"
+          echo "🔍 Revisar logs en BrowserStack Dashboard: https://automate.browserstack.com/dashboard"
+          echo "📊 Descargar reporte Serenity de Artifacts para más detalles"
+          echo "🎥 Videos de la ejecución disponibles en BrowserStack"
