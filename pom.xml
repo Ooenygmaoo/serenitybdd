@@ -171,4 +171,46 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- Profiles para BrowserStack -->
+    <profiles>
+        <!-- Profile para ejecutar en BrowserStack -->
+        <profile>
+            <id>browserstack</id>
+            <properties>
+                <environment>browserstack</environment>
+                <tags>@webMuthematrix</tags>
+            </properties>
+        </profile>
+
+        <!-- Profile para Windows en BrowserStack -->
+        <profile>
+            <id>browserstack-windows</id>
+            <properties>
+                <environment>browserstack</environment>
+                <platform>windows</platform>
+                <tags>@webMuthematrix</tags>
+            </properties>
+        </profile>
+
+        <!-- Profile para Mac en BrowserStack -->
+        <profile>
+            <id>browserstack-mac</id>
+            <properties>
+                <environment>browserstack</environment>
+                <platform>mac</platform>
+                <tags>@webMuthematrix</tags>
+            </properties>
+        </profile>
+
+        <!-- Profile para iPhone en BrowserStack -->
+        <profile>
+            <id>browserstack-iphone</id>
+            <properties>
+                <environment>browserstack</environment>
+                <platform>iphone</platform>
+                <tags>@webMuthematrix</tags>
+            </properties>
+        </profile>
+    </profiles>
 </project>
