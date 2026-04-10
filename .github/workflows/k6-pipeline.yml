@@ -2,7 +2,7 @@ name: CPT K6 Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   k6-test:
