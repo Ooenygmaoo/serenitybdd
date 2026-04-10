@@ -24,13 +24,14 @@ jobs:
       - name: Create results folder
         run: mkdir -p results
 
-      - name: Run k6 test with JSON output
+      - name: Run k6 test (JSON output)
         run: k6 run test.js --out json=results/result.json
 
-      - name: Generate HTML report
+      - name: Generate simple HTML report
         run: |
-          npm install -g k6-reporter
-          k6-reporter results/result.json --output results/report.html
+          echo "<html><body><h1>K6 Report</h1><pre>" > results/report.html
+          cat results/result.json >> results/report.html
+          echo "</pre></body></html>" >> results/report.html
 
       - name: Upload report artifact
         uses: actions/upload-artifact@v4
