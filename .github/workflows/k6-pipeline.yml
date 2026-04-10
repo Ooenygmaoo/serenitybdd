@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Install k6
@@ -21,5 +21,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y k6
 
-      - name: Run k6
-        run: k6 run test.js
+      - name: Create results folder
+        run: mkdir -p results
+
+      - name: Run k6 test with JSON output
+        run: k6 run test.js --out json=results/result.json
+
+      - name: Generate HTML report
+        run: |
+          npm install -g k6-reporter
+          k6-reporter results/result.json --output results/report.html
+
+      - name: Upload report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-report
+          path: results/
