@@ -36,7 +36,12 @@ jobs:
           echo "🖥️  Plataforma: Windows 10 + Chrome Latest"
           echo "👤 Usuario: David (slash17)"
           echo "🌎 Zona horaria: America/Bogota (Colombia)"
+          echo "✅ Verificando credenciales..."
+          echo "   Usuario BrowserStack: ${{ secrets.BROWSERSTACK_USER }}"
+          echo "   Access Key Length: ${#BROWSERSTACK_KEY}"
           echo "================================"
+        env:
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
       - name: 🧪 Ejecutar test Windows (David)
         env:
@@ -88,7 +93,12 @@ jobs:
           echo "🍎 Plataforma: Mac OS Monterey + Safari 15.6"
           echo "👤 Usuario: Enzo (enzo)"
           echo "🌎 Zona horaria: America/Bogota (Colombia)"
+          echo "✅ Verificando credenciales..."
+          echo "   Usuario BrowserStack: ${{ secrets.BROWSERSTACK_USER }}"
+          echo "   Access Key Length: ${#BROWSERSTACK_KEY}"
           echo "================================"
+        env:
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
       - name: 🧪 Ejecutar test Mac (Enzo)
         env:
