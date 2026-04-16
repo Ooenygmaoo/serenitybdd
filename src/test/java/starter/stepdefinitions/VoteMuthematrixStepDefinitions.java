@@ -23,8 +23,8 @@ public class VoteMuthematrixStepDefinitions {
         );
     }
 
-    @When("{actor} enter to the login page and click on vote")
-    public void enterToTheLoginPageAndClickOnVote(Actor actor) {
+    @When("{actor} enter to the login page and click on vote with username {string} and password {string}")
+    public void enterToTheLoginPageAndClickOnVote(Actor actor, String username, String password) {
         actor.attemptsTo(
 
                 Check.whether(Presence.of("//button[contains(.,'Cerrar')]").asBoolean())
@@ -41,11 +41,11 @@ public class VoteMuthematrixStepDefinitions {
 
                 WaitUntil.the("//input[@id='username']", isVisible())
                         .forNoMoreThan(15).seconds(),
-                Enter.theValue("slash17").into("//input[@id='username']"),
+                Enter.theValue(username).into("//input[@id='username']"),
 
                 WaitUntil.the("//input[@id='password']", isVisible())
                         .forNoMoreThan(10).seconds(),
-                Enter.theValue("nirvana16").into("//input[@id='password']"),
+                Enter.theValue(password).into("//input[@id='password']"),
 
                 Click.on("//input[@id='submit']"),
 
