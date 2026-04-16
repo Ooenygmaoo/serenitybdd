@@ -63,6 +63,8 @@ run_test() {
 
     mvn clean verify \
         -Denvironment=browserstack \
+        -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+        -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
         -Dcucumber.filter.tags="@$TAG" \
         -Dmaven.test.failure.ignore=true
 
