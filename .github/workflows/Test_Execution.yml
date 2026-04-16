@@ -2,7 +2,7 @@ name: BrowserStack Tests - Windows & Mac (11 AM & 11 PM Colombia)
 
 on:
   push:
-    branches: [ master]
+    branches: [master]
 
   workflow_dispatch:   # Permite ejecución manual
 
