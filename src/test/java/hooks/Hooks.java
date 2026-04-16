@@ -8,14 +8,39 @@ import net.thucydides.model.util.EnvironmentVariables;
 
 public class Hooks {
 
-    @Before
+    @Before(order = 0)
     public void setupDriver(Scenario scenario) {
         EnvironmentVariables variables = SystemEnvironmentVariables.createEnvironmentVariables();
         String driver = variables.getProperty("webdriver.driver");
-        String remoteUrl = variables.getProperty("webdriver.remote.url");
+        String environment = variables.getProperty("environment");
 
-        // Solo configurar WebDriverManager si NO estamos usando remote driver (BrowserStack)
-        if (remoteUrl == null || remoteUrl.isEmpty()) {
+        // Si estamos en BrowserStack
+        if ("browserstack".equalsIgnoreCase(environment) || "remote".equalsIgnoreCase(driver)) {
+            System.out.println("☁️  Configurando BrowserStack");
+            System.out.println("📱 Scenario: " + scenario.getName());
+            System.out.println("🏷️  Tags: " + scenario.getSourceTagNames());
+
+            // Verificar credenciales
+            String user = System.getProperty("BROWSERSTACK_USER");
+            String key = System.getProperty("BROWSERSTACK_KEY");
+
+            if (user != null && key != null) {
+                System.out.println("✅ Credenciales BrowserStack encontradas");
+                System.out.println("👤 Usuario: " + user);
+            } else {
+                System.out.println("⚠️  Credenciales BrowserStack NO encontradas en system properties");
+            }
+
+            // Mostrar plataforma según tags
+            if (scenario.getSourceTagNames().contains("@windows")) {
+                System.out.println("🖥️  Plataforma: Windows 10 + Chrome Latest");
+            } else if (scenario.getSourceTagNames().contains("@mac")) {
+                System.out.println("🍎 Plataforma: Mac OS Monterey + Safari 15.6");
+            }
+
+            System.out.println("🌎 Geolocalización: Colombia");
+        } else {
+            // Configurar driver local
             System.out.println("🔧 Configurando driver local: " + driver);
 
             if ("chrome".equalsIgnoreCase(driver)) {
@@ -25,28 +50,6 @@ public class Hooks {
             } else if ("edge".equalsIgnoreCase(driver)) {
                 WebDriverManager.edgedriver().setup();
             }
-        } else {
-            System.out.println("☁️  Usando BrowserStack - Remote WebDriver");
-            System.out.println("📱 Scenario: " + scenario.getName());
-
-            // Configurar plataforma según tags
-            if (scenario.getSourceTagNames().contains("@windows")) {
-                System.out.println("🖥️  Plataforma: Windows 10 + Chrome Latest");
-                System.setProperty("bstack.os", "Windows");
-                System.setProperty("bstack.osVersion", "10");
-                System.setProperty("bstack.browserName", "Chrome");
-                System.setProperty("bstack.browserVersion", "latest");
-                System.setProperty("bstack.sessionName", "Vote Test - Windows Chrome - " + scenario.getName());
-            } else if (scenario.getSourceTagNames().contains("@mac")) {
-                System.out.println("🍎 Plataforma: Mac OS Monterey + Safari 15.6");
-                System.setProperty("bstack.os", "OS X");
-                System.setProperty("bstack.osVersion", "Monterey");
-                System.setProperty("bstack.browserName", "Safari");
-                System.setProperty("bstack.browserVersion", "15.6");
-                System.setProperty("bstack.sessionName", "Vote Test - Mac Safari - " + scenario.getName());
-            }
-
-            System.out.println("🌎 Geolocalización: Colombia");
         }
     }
 }
