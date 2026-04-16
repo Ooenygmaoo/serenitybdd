@@ -1,4 +1,4 @@
-name: BrowserStack Tests - Windows Chrome (11 AM & 11 PM Colombia)
+name: BrowserStack Tests - Windows Chrome (9 AM & 9 PM Colombia)
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
   workflow_dispatch:   # Permite ejecución manual
 
   schedule:
-    - cron: '0 16 * * *'   # 11:00 AM Colombia (UTC-5 → 16:00 UTC)
-    - cron: '0 4 * * *'    # 11:00 PM Colombia (UTC-5 → 04:00 UTC del día siguiente)
+    - cron: '0 14 * * *'   # 9:00 AM Colombia (UTC-5 → 14:00 UTC)
+    - cron: '0 2 * * *'    # 9:00 PM Colombia (UTC-5 → 02:00 UTC del día siguiente)
 
 
 jobs:
@@ -43,7 +43,13 @@ jobs:
 
       - name: Generar reporte Serenity
         if: always()
-        run: mvn serenity:aggregate
+        env:
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_KEY }}
+        run: |
+          mvn serenity:aggregate \
+            -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+            -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}"
 
       - name: Subir reporte Serenity
         if: always()
