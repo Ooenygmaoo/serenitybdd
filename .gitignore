@@ -29,11 +29,25 @@ Thumbs.db
 # Archivos de documentación
 *.md
 !README.md
+!README-BROWSERSTACK-MULTIPLATAFORMA.md
+!COMO-CREAR-SECRETS-GITHUB.md
+!GUIA-RAPIDA-INICIO.md
+!RESUMEN-FINAL.md
 *.txt
+
+# Scripts con credenciales (NO SUBIR)
+configurar-credenciales.sh
+MIS-CREDENCIALES-BROWSERSTACK.txt
+*credenciales*.txt
+*credentials*.txt
 
 # Scripts temporales de demo (mantener scripts importantes)
 demo-browserstack.sh
 ejecutar-ahora.sh
+run-browserstack.sh
+run-browserstack-all.sh
+ejecutar-test-browserstack.sh
+!ejecutar-browserstack.sh
 
 # Reportes y logs
 *.log

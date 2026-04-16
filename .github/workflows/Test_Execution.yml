@@ -1,8 +1,8 @@
-name: BrowserStack Tests - 11 AM & 11 PM Colombia
+name: BrowserStack Tests - Windows & Mac (11 AM & 11 PM Colombia)
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
 
   workflow_dispatch:   # Permite ejecución manual
 
@@ -11,8 +11,8 @@ on:
     - cron: '0 4 * * *'    # 11:00 PM Colombia (UTC-5 → 04:00 UTC del día siguiente)
 
 jobs:
-  browserstack-tests:
-    name: BrowserStack - Windows 10 Chrome Latest
+  test-windows:
+    name: David - Windows 10 Chrome
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -34,60 +34,105 @@ jobs:
           echo "🌍 Ejecutando tests en BrowserStack"
           echo "⏰ Hora de ejecución: $(date)"
           echo "🖥️  Plataforma: Windows 10 + Chrome Latest"
+          echo "👤 Usuario: David (slash17)"
           echo "🌎 Zona horaria: America/Bogota (Colombia)"
-          echo "👤 Usuario: david3360"
           echo "================================"
 
-      - name: 🧪 Ejecutar tests en BrowserStack
+      - name: 🧪 Ejecutar test Windows (David)
         env:
-          BROWSERSTACK_USER: david3360
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
           mvn clean verify \
             -Denvironment=browserstack \
-            -Dcucumber.filter.tags="@webMuthematrix" \
+            -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+            -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -Dcucumber.filter.tags="@windows" \
             -Dmaven.test.failure.ignore=true
 
-      - name: 📊 Generar reporte Serenity
+      - name: 📊 Generar reporte Serenity - Windows
         if: always()
         run: mvn serenity:aggregate
 
-      - name: 📦 Subir reporte Serenity
+      - name: 📦 Subir reporte Serenity - Windows
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: serenity-browserstack-report-${{ github.run_number }}
+          name: serenity-windows-report-${{ github.run_number }}
           path: target/site/serenity/
           retention-days: 30
 
-      - name: 📋 Publicar resumen de resultados
-        if: always()
+  test-mac:
+    name: Enzo - Mac OS Safari
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: test-windows  # Ejecutar después de Windows para no gastar paralelismo
+
+    steps:
+      - name: 📥 Checkout repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: ☕ Configurar Java 17 con cache Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: 🔍 Verificar configuración BrowserStack
         run: |
-          echo "## 📊 Resultados BrowserStack - Windows 10 Chrome" >> $GITHUB_STEP_SUMMARY
+          echo "🌍 Ejecutando tests en BrowserStack"
+          echo "⏰ Hora de ejecución: $(date)"
+          echo "🍎 Plataforma: Mac OS Monterey + Safari 15.6"
+          echo "👤 Usuario: Enzo (enzo)"
+          echo "🌎 Zona horaria: America/Bogota (Colombia)"
+          echo "================================"
+
+      - name: 🧪 Ejecutar test Mac (Enzo)
+        env:
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          mvn clean verify \
+            -Denvironment=browserstack \
+            -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+            -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -Dcucumber.filter.tags="@mac" \
+            -Dmaven.test.failure.ignore=true
+
+      - name: 📊 Generar reporte Serenity - Mac
+        if: always()
+        run: mvn serenity:aggregate
+
+      - name: 📦 Subir reporte Serenity - Mac
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: serenity-mac-report-${{ github.run_number }}
+          path: target/site/serenity/
+          retention-days: 30
+
+  publish-summary:
+    name: Publicar Resumen
+    runs-on: ubuntu-latest
+    needs: [test-windows, test-mac]
+    if: always()
+
+    steps:
+      - name: 📋 Publicar resumen de resultados
+        run: |
+          echo "## 📊 Resultados BrowserStack - Múltiples Plataformas" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🎯 Información de Ejecución" >> $GITHUB_STEP_SUMMARY
+          echo "### 🎯 Tests Ejecutados" >> $GITHUB_STEP_SUMMARY
           echo "- **Fecha**: $(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_STEP_SUMMARY
-          echo "- **Plataforma**: Windows 10 + Chrome Latest" >> $GITHUB_STEP_SUMMARY
-          echo "- **Zona Horaria**: America/Bogota (Colombia)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Usuario BrowserStack**: david3360" >> $GITHUB_STEP_SUMMARY
-          echo "- **Tag ejecutado**: @webMuthematrix" >> $GITHUB_STEP_SUMMARY
+          echo "- **Usuario BrowserStack**: ${{ secrets.BROWSERSTACK_USER }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🖥️  Plataformas Testadas" >> $GITHUB_STEP_SUMMARY
+          echo "1. **Windows 10 + Chrome Latest** → Usuario: David (slash17)" >> $GITHUB_STEP_SUMMARY
+          echo "2. **Mac OS Monterey + Safari 15.6** → Usuario: Enzo (enzo)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔗 Enlaces" >> $GITHUB_STEP_SUMMARY
           echo "- [📊 Dashboard BrowserStack](https://automate.browserstack.com/dashboard)" >> $GITHUB_STEP_SUMMARY
-          echo "- [🎥 Videos y Logs](https://automate.browserstack.com/dashboard)" >> $GITHUB_STEP_SUMMARY
-          echo "- 📁 Reporte Serenity disponible en Artifacts" >> $GITHUB_STEP_SUMMARY
-
-      - name: ✅ Test completado exitosamente
-        if: success()
-        run: |
-          echo "✅ Tests ejecutados exitosamente en BrowserStack"
-          echo "🔗 Ver resultados completos en: https://automate.browserstack.com/dashboard"
-          echo "📊 Reporte Serenity subido como artifact"
-
-      - name: ❌ Test fallido - Ver logs
-        if: failure()
-        run: |
-          echo "❌ Los tests fallaron en BrowserStack"
-          echo "🔍 Revisar logs en BrowserStack Dashboard: https://automate.browserstack.com/dashboard"
-          echo "📊 Descargar reporte Serenity de Artifacts para más detalles"
-          echo "🎥 Videos de la ejecución disponibles en BrowserStack"
+          echo "- 📁 Reportes Serenity disponibles en Artifacts" >> $GITHUB_STEP_SUMMARY
