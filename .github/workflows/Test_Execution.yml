@@ -1,4 +1,4 @@
-name: BrowserStack Tests - Windows & Mac (11 AM & 11 PM Colombia)
+name: BrowserStack Tests - Windows & Mac (9 AM & 9 PM Colombia)
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
   workflow_dispatch:   # Permite ejecución manual
 
   schedule:
-    - cron: '0 16 * * *'   # 11:00 AM Colombia (UTC-5 → 16:00 UTC)
-    - cron: '0 4 * * *'    # 11:00 PM Colombia (UTC-5 → 04:00 UTC del día siguiente)
+    - cron: '0 14 * * *'   # 9:00 AM Colombia (UTC-5 → 14:00 UTC)
+    - cron: '0 2 * * *'    # 9:00 PM Colombia (UTC-5 → 02:00 UTC del día siguiente)
 
 jobs:
   test-windows:
@@ -48,16 +48,30 @@ jobs:
           BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
+          # Construir la URL completa de BrowserStack con las credenciales
+          BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
+          
           mvn clean verify \
             -Denvironment=browserstack \
             -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
             -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -DBROWSERSTACK_URL="${BROWSERSTACK_URL}" \
             -Dcucumber.filter.tags="@windows" \
             -Dmaven.test.failure.ignore=true
 
       - name: 📊 Generar reporte Serenity - Windows
         if: always()
-        run: mvn serenity:aggregate
+        env:
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          # Construir la URL completa de BrowserStack con las credenciales
+          BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
+          
+          mvn serenity:aggregate \
+            -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+            -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -DBROWSERSTACK_URL="${BROWSERSTACK_URL}"
 
       - name: 📦 Subir reporte Serenity - Windows
         if: always()
@@ -105,16 +119,30 @@ jobs:
           BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
+          # Construir la URL completa de BrowserStack con las credenciales
+          BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
+          
           mvn clean verify \
             -Denvironment=browserstack \
             -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
             -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -DBROWSERSTACK_URL="${BROWSERSTACK_URL}" \
             -Dcucumber.filter.tags="@mac" \
             -Dmaven.test.failure.ignore=true
 
       - name: 📊 Generar reporte Serenity - Mac
         if: always()
-        run: mvn serenity:aggregate
+        env:
+          BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
+          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+        run: |
+          # Construir la URL completa de BrowserStack con las credenciales
+          BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
+          
+          mvn serenity:aggregate \
+            -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
+            -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -DBROWSERSTACK_URL="${BROWSERSTACK_URL}"
 
       - name: 📦 Subir reporte Serenity - Mac
         if: always()
