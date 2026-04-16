@@ -34,10 +34,15 @@ jobs:
         run: |
           echo "🚀 Iniciando tests en BrowserStack..."
           echo "Usuario BrowserStack: ${BROWSERSTACK_USER}"
+          
+          # Construir la URL completa de BrowserStack con las credenciales
+          BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
+          
           mvn clean verify \
             -Dcucumber.filter.tags="@webMuthematrix" \
             -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
             -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -DBROWSERSTACK_URL="${BROWSERSTACK_URL}" \
             -Dwebdriver.driver=remote \
             -Dmaven.test.failure.ignore=true
 
@@ -47,9 +52,13 @@ jobs:
           BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_KEY }}
         run: |
+          # Construir la URL completa de BrowserStack con las credenciales
+          BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
+          
           mvn serenity:aggregate \
             -DBROWSERSTACK_USER="${BROWSERSTACK_USER}" \
-            -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}"
+            -DBROWSERSTACK_KEY="${BROWSERSTACK_KEY}" \
+            -DBROWSERSTACK_URL="${BROWSERSTACK_URL}"
 
       - name: Subir reporte Serenity
         if: always()
