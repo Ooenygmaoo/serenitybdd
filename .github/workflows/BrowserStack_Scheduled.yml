@@ -1,16 +1,17 @@
-name: BrowserStack Tests - Windows & Mac (9 AM & 9 PM Colombia)
+name: BrowserStack - Scheduled via External Cron (Every 12 Hours)
 
 on:
-  # DESACTIVADO TEMPORALMENTE - Usando BrowserStack_Scheduled.yml
-  # push:
-  #   branches: [feature]
-
-  workflow_dispatch:   # Solo permite ejecución manual
-
-  # SCHEDULE DESACTIVADO - Usando cron-job.org en BrowserStack_Scheduled.yml
-  # schedule:
-  #   - cron: '0 14 * * *'   # 9:00 AM Colombia (UTC-5 → 14:00 UTC)
-  #   - cron: '0 2 * * *'    # 9:00 PM Colombia (UTC-5 → 02:00 UTC del día siguiente)
+  # Trigger por webhook externo (cron-job.org)
+  repository_dispatch:
+    types: [run-browserstack-tests]
+  
+  # También permite ejecución manual
+  workflow_dispatch:
+  
+  # Backup: GitHub cron (menos preciso, pero funciona)
+  schedule:
+    - cron: '0 17 * * *'   # 12:00 PM Colombia (17:00 UTC)
+    - cron: '0 5 * * *'    # 12:00 AM Colombia (05:00 UTC)
 
 jobs:
   test-windows:
@@ -38,19 +39,15 @@ jobs:
           echo "🖥️  Plataforma: Windows 10 + Chrome Latest"
           echo "👤 Usuario: David (slash17)"
           echo "🌎 Zona horaria: America/Bogota (Colombia)"
-          echo "✅ Verificando credenciales..."
-          echo "   Usuario BrowserStack: ${{ secrets.BROWSERSTACK_USER }}"
-          echo "   Access Key Length: ${#BROWSERSTACK_KEY}"
+          echo "✅ Trigger: ${{ github.event_name }}"
           echo "================================"
-        env:
-          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
       - name: 🧪 Ejecutar test Windows (David)
         env:
           BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
-          # Construir la URL completa de BrowserStack con las credenciales
+          # Construir la URL completa de BrowserStack
           BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
           
           mvn clean verify \
@@ -67,7 +64,6 @@ jobs:
           BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
-          # Construir la URL completa de BrowserStack con las credenciales
           BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
           
           mvn serenity:aggregate \
@@ -87,7 +83,7 @@ jobs:
     name: Enzo - Mac OS Safari
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: test-windows  # Ejecutar después de Windows para no gastar paralelismo
+    needs: test-windows
 
     steps:
       - name: 📥 Checkout repositorio
@@ -108,20 +104,14 @@ jobs:
           echo "⏰ Hora de ejecución: $(date)"
           echo "🍎 Plataforma: Mac OS Monterey + Safari 15.6"
           echo "👤 Usuario: Enzo (enzo)"
-          echo "🌎 Zona horaria: America/Bogota (Colombia)"
-          echo "✅ Verificando credenciales..."
-          echo "   Usuario BrowserStack: ${{ secrets.BROWSERSTACK_USER }}"
-          echo "   Access Key Length: ${#BROWSERSTACK_KEY}"
+          echo "✅ Trigger: ${{ github.event_name }}"
           echo "================================"
-        env:
-          BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
 
       - name: 🧪 Ejecutar test Mac (Enzo)
         env:
           BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
-          # Construir la URL completa de BrowserStack con las credenciales
           BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
           
           mvn clean verify \
@@ -138,7 +128,6 @@ jobs:
           BROWSERSTACK_USER: ${{ secrets.BROWSERSTACK_USER }}
           BROWSERSTACK_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
         run: |
-          # Construir la URL completa de BrowserStack con las credenciales
           BROWSERSTACK_URL="https://${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}@hub-cloud.browserstack.com/wd/hub"
           
           mvn serenity:aggregate \
@@ -163,10 +152,11 @@ jobs:
     steps:
       - name: 📋 Publicar resumen de resultados
         run: |
-          echo "## 📊 Resultados BrowserStack - Múltiples Plataformas" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Resultados BrowserStack - Ejecución cada 12 horas" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🎯 Tests Ejecutados" >> $GITHUB_STEP_SUMMARY
           echo "- **Fecha**: $(date '+%Y-%m-%d %H:%M:%S %Z')" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Usuario BrowserStack**: ${{ secrets.BROWSERSTACK_USER }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🖥️  Plataformas Testadas" >> $GITHUB_STEP_SUMMARY
@@ -176,3 +166,4 @@ jobs:
           echo "### 🔗 Enlaces" >> $GITHUB_STEP_SUMMARY
           echo "- [📊 Dashboard BrowserStack](https://automate.browserstack.com/dashboard)" >> $GITHUB_STEP_SUMMARY
           echo "- 📁 Reportes Serenity disponibles en Artifacts" >> $GITHUB_STEP_SUMMARY
+

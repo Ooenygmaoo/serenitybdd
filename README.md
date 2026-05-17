@@ -96,6 +96,17 @@ El reporte se generará en: `target/site/serenity/index.html`
 
 ## 🤖 Ejecución en GitHub Actions
 
+### ⚠️ Limitaciones de GitHub Actions Free
+
+| Tipo de Repo | Minutos/Mes | Suficiente para |
+|--------------|-------------|-----------------|
+| **Público** | 🟢 2000 min | ~40 ejecuciones (50 min c/u) |
+| **Privado** | 🔴 100 min | ~2 ejecuciones (50 min c/u) |
+
+**💡 Soluciones si tienes repo privado**:
+1. **Hacer el repo público** (2000 min/mes gratis)
+2. **Usar cron externo gratis** como [Cron-job.org](https://cron-job.org/) → Ver: `SETUP-CRON-GRATIS.md`
+
 ### ⏰ Ejecución Automática (Programada)
 
 Los tests se ejecutan automáticamente **2 veces al día**:
@@ -112,7 +123,21 @@ schedule:
   - cron: '0 2 * * *'    # 9 PM Colombia
 ```
 
+⚠️ **Nota sobre precisión**: 
+- El cron de GitHub Actions puede variar ±15 minutos debido a la carga del servidor
+- Para ejecuciones **exactas cada 12 horas**, usa el workflow `BrowserStack_Scheduled.yml` con trigger externo
+- Ver guía completa en: `SETUP-CRON-GRATIS.md`
+
 ### 🚀 Ejecución Manual
+
+#### Workflows Disponibles:
+
+| Workflow | Archivo | Trigger | Uso |
+|----------|---------|---------|-----|
+| **GitHub Cron** | `Test_Execution.yml` | Cron integrado | Repos públicos o con minutos suficientes |
+| **External Cron** | `BrowserStack_Scheduled.yml` | Webhook externo | **Recomendado para repos privados** |
+
+#### Ejecutar desde GitHub:
 
 1. Ve a tu repositorio en GitHub: [Actions Tab](../../actions)
 2. Click en **"BrowserStack Tests - Windows & Mac (9 AM & 9 PM Colombia)"**
