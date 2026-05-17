@@ -8,10 +8,10 @@ on:
   # También permite ejecución manual
   workflow_dispatch:
   
-  # Backup: GitHub cron (menos preciso, pero funciona)
-  schedule:
-    - cron: '0 17 * * *'   # 12:00 PM Colombia (17:00 UTC)
-    - cron: '0 5 * * *'    # 12:00 AM Colombia (05:00 UTC)
+  # Backup: GitHub cron (DESACTIVADO - usando cron-job.org)
+  # schedule:
+  #   - cron: '0 17 * * *'   # 12:00 PM Colombia (17:00 UTC)
+  #   - cron: '0 5 * * *'    # 12:00 AM Colombia (05:00 UTC)
 
 jobs:
   test-windows:
