@@ -26,14 +26,10 @@ out/
 .DS_Store
 Thumbs.db
 
-# Archivos de documentación
-*.md
-!README.md
-!README-BROWSERSTACK-MULTIPLATAFORMA.md
-!COMO-CREAR-SECRETS-GITHUB.md
-!GUIA-RAPIDA-INICIO.md
-!RESUMEN-FINAL.md
+# Documentación innecesaria (solo mantener README.md principal)
+COMANDOS.md
 *.txt
+!README.md
 
 # Scripts con credenciales (NO SUBIR)
 configurar-credenciales.sh
@@ -41,20 +37,19 @@ MIS-CREDENCIALES-BROWSERSTACK.txt
 *credenciales*.txt
 *credentials*.txt
 
-# Scripts temporales de demo (mantener scripts importantes)
+# Scripts temporales
 demo-browserstack.sh
 ejecutar-ahora.sh
 run-browserstack.sh
 run-browserstack-all.sh
 ejecutar-test-browserstack.sh
-!ejecutar-browserstack.sh
+ejecutar-browserstack.sh
 
 # Reportes y logs
 *.log
+build/test-results/
 
-# Avoid ignoring Maven wrapper jar file
+# Mantener Maven wrapper y GitHub Actions
 !/.mvn/wrapper/maven-wrapper.jar
-
-# Mantener workflow de GitHub Actions
 !.github/**
 
