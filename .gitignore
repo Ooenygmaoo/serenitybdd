@@ -26,10 +26,11 @@ out/
 .DS_Store
 Thumbs.db
 
-# Documentación innecesaria (solo mantener README.md principal)
+# Documentación innecesaria (mantener README.md y SETUP-CRON-GRATIS.md)
 COMANDOS.md
 *.txt
 !README.md
+!SETUP-CRON-GRATIS.md
 
 # Scripts con credenciales (NO SUBIR)
 configurar-credenciales.sh
