@@ -83,7 +83,6 @@ jobs:
     name: Enzo - Mac OS Safari
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: test-windows
 
     steps:
       - name: 📥 Checkout repositorio

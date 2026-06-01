@@ -87,7 +87,6 @@ jobs:
     name: Enzo - Mac OS Safari
     runs-on: ubuntu-latest
     timeout-minutes: 20
-    needs: test-windows  # Ejecutar después de Windows para no gastar paralelismo
 
     steps:
       - name: 📥 Checkout repositorio
