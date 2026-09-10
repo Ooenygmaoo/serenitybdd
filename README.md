@@ -298,8 +298,8 @@ RemoteDriverConfigurationError: A webdriver.remote.url property must be defined 
 **Solución**:
 1. Verifica las credenciales actuales en: https://www.browserstack.com/accounts/settings
 2. Actualiza los secrets en GitHub con las nuevas credenciales:
-   - Username: `dlope1`
-   - Access Key: `mxZX5sgt3oEpsjG9stAy`
+   - Username: `davisitolopez_eWd2Ru`
+   - Access Key: (ver GitHub Secrets → `BROWSERSTACK_ACCESS_KEY`, no se almacena en texto plano)
 3. Vuelve a ejecutar el workflow
 
 ---
@@ -339,7 +339,8 @@ RemoteDriverConfigurationError: A webdriver.remote.url property must be defined 
 
 ```bash
 # Verificar conexión a BrowserStack
-curl -u "dlope1:mxZX5sgt3oEpsjG9stAy" \
+# Exporta primero tus credenciales: export BROWSERSTACK_USER=... BROWSERSTACK_KEY=...
+curl -u "${BROWSERSTACK_USER}:${BROWSERSTACK_KEY}" \
   https://api.browserstack.com/automate/plan.json
 
 # Ver configuración de Serenity
@@ -458,8 +459,8 @@ Los siguientes secrets ya están configurados en tu repositorio:
 
 | Secret Name | Valor | Ubicación |
 |-------------|-------|-----------|
-| `BROWSERSTACK_USER` | `dlope1` | GitHub Settings → Secrets |
-| `BROWSERSTACK_ACCESS_KEY` | `mxZX5sgt3oEpsjG9stAy` | GitHub Settings → Secrets |
+| `BROWSERSTACK_USER` | `davisitolopez_eWd2Ru` | GitHub Settings → Secrets |
+| `BROWSERSTACK_ACCESS_KEY` | (oculto por seguridad) | GitHub Settings → Secrets |
 
 ### Verificación de Secrets
 
@@ -534,7 +535,7 @@ Este proyecto está bajo la licencia especificada en el archivo `LICENSE`.
 
 ---
 
-**Última actualización**: Mayo 17, 2026  
+**Última actualización**: Septiembre 10, 2026  
 **Credenciales BrowserStack**: Actualizadas ✅  
-**Username actual**: `dlope1`
+**Username actual**: `davisitolopez_eWd2Ru`
 
