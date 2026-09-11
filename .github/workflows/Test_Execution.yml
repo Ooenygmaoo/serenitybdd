@@ -77,7 +77,7 @@ jobs:
 
       - name: 📦 Subir reporte Serenity - Windows
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: serenity-windows-report-${{ github.run_number }}
           path: target/site/serenity/
@@ -147,7 +147,7 @@ jobs:
 
       - name: 📦 Subir reporte Serenity - Mac
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: serenity-mac-report-${{ github.run_number }}
           path: target/site/serenity/
